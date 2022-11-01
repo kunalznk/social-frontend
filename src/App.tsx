@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <h2>React App</h2>
-      <Header />
+<!--       <Header /> -->
       
     </div>
   );
