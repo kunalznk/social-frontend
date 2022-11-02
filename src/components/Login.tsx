@@ -22,7 +22,12 @@ import { ChangeEvent, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginInputSchema } from "../utils/yup";
 import SubmitButton from "./SubmitButton";
-const Login = () => {
+import { getClientLoading } from "../utils/common";
+import { useQuery } from "@apollo/client";
+import { Navigate, useNavigate } from "react-router-dom";
+const Login = (props : {setReg : React.Dispatch<React.SetStateAction<boolean>>}) => {
+
+  const navigate = useNavigate()
   const initialState = {
     username: "",
     password: "",
@@ -30,6 +35,7 @@ const Login = () => {
 
   const [loginForm, setLoginForm] = useState(initialState);
 
+  const { data:LOAD, client } = useQuery(getClientLoading);
   const {
     register,
     handleSubmit,
@@ -66,7 +72,14 @@ const Login = () => {
     });
 
     console.log(data , errors , "eerrr")
-    localStorage.setItem("token", data?.login!);
+
+    if(data?.login!) {
+      localStorage.setItem("token", data?.login!);
+      navigate("/home")
+    } 
+    if(errors) {
+      console.log(errors)
+    }
   };
 
   return (
@@ -141,6 +154,7 @@ const Login = () => {
           <SubmitButton loading={loading} label={"Login"}/>
         </Stack>
       </form>
+      <p style={{alignSelf:"center"}}>Don't have an account? <b onClick={() => props.setReg(true)} style={{color:"rgba(0 , 149 ,246)" , cursor:"pointer"}}> Sign up</b></p>
     </Card>
   );
 };

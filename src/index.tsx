@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-
+import { HashRouter } from "react-router-dom";
 import {
   ApolloClient,
   InMemoryCache,
@@ -12,8 +12,9 @@ import {
   ApolloLink,
   HttpLink,
 } from "@apollo/client";
+import { getClientLoading } from "./utils/common";
 
-const httpLink = new HttpLink({ uri: process.env.BACKEND_URL });
+const httpLink = new HttpLink({ uri: "http://localhost:4000/graphql" });
 
 const authLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem("token");
@@ -30,13 +31,21 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+client.cache.writeQuery({
+  query: getClientLoading,
+  data : {
+    clientLoading : false
+  }
+})
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <ApolloProvider client={client}>
     <React.StrictMode>
+      <HashRouter >
       <App />
+      </HashRouter>
     </React.StrictMode>
   </ApolloProvider>
 );

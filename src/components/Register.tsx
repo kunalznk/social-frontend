@@ -28,8 +28,11 @@ import { ChangeEvent, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { CreateUserInputSchema } from "../utils/yup";
 import SubmitButton from "./SubmitButton";
+import { useQuery } from "@apollo/client";
+import { getClientLoading } from "../utils/common";
+import Loader from "./Loader";
 
-const Register = () => {
+const Register = (props : {setReg : React.Dispatch<React.SetStateAction<boolean>>}) => {
   const initialState = {
     fullName: "",
     username: "",
@@ -39,6 +42,8 @@ const Register = () => {
   };
 
   const [registerForm, setRegisterForm] = useState(initialState);
+  const {  data : clientData , client } = useQuery(getClientLoading);
+  console.log(clientData , client)
 
   const {
     register,
@@ -65,7 +70,7 @@ const Register = () => {
   const [registerMutation, { data, loading, error }] = useRegisterMutation();
 
   if (loading) {
-    return <CircularProgress />;
+    return <Loader />;
   }
 
   if (error) {
@@ -73,18 +78,25 @@ const Register = () => {
   }
 
   const Register = async (input: CreateUserInput) => {
-    const { data, errors } = await registerMutation({
-      variables: {
-        input,
-      },
-    });
-    if (data?.register) {
-      // reset Form
-      reset(initialState);
-      // render Login
-    } else {
-      // show Error
-    }
+    
+      const { data, errors } = await registerMutation({
+        variables: {
+          input,
+        },
+      });
+      if (data?.register) {
+        // reset Form
+        reset(initialState);
+        console.log(data?.register)
+        props.setReg(false)
+        // show login sucess aler
+        // render Login
+      } else {
+        // show Error
+
+      }
+  
+    
   };
 
   return (
@@ -249,6 +261,7 @@ const Register = () => {
           <SubmitButton loading={loading} label={"Signup"}/>
         </Stack>
       </form>
+      <p style={{alignSelf:"center"}}>have an account <b onClick={() => props.setReg(false)} style={{color:"rgba(0 , 149 ,246)" , cursor:"pointer"}}> Log in</b></p>
     </Card>
   );
 };
