@@ -14,7 +14,7 @@ import {
 } from "@apollo/client";
 import { getClientLoading } from "./utils/common";
 
-const httpLink = new HttpLink({ uri: process.env.BACKEND_URL });
+const httpLink = new HttpLink({ uri: "https://pro-node-back.herokuapp.com/graphql" });
 
 const authLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem("token");
